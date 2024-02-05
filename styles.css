@@ -9,6 +9,9 @@ body {
 	background-size: 400% 400%;
 	animation: gradient 5s ease infinite;
 	height: 100vh;
+
+    display: grid;
+    place-items: center;
 }
 @keyframes gradient {
 	0% {
@@ -23,83 +26,43 @@ body {
 }
 
 .container {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+    --tile-size: 65px;
+    --num-cols: 5;
+    --num-rows: 8;
 
-.board {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    width: calc(var(--tile-size) * var(--num-cols));
+    height: calc(var(--tile-size) * var(--num-rows));
+    position: relative;
 }
 
 .tile {
-    background-color: aliceblue;
-    width: 4rem;
-    height: 4rem;
-    margin: .1rem;
-    transition: transform .06s ease-in-out;
-    user-select: none;
-    border-radius: 5px;
-    display: grid;
-    place-items: center;
-    font-family: sans-serif;
-    font-size: 1.2rem;
-    animation: spawn .2s linear;
+    --tile-real-size: 55px;
+    --bg-color: rgb(255, 62, 62);
+
+    width: var(--tile-real-size);
+    height: var(--tile-real-size);
+    background-color: var(--bg-color);
+
+    position: absolute;
+    top: calc(var(--i) * var(--tile-size));
+    left: calc(var(--j) * var(--tile-size));
+    transition: top .3s ease-in-out;
 }
-.tile.spawned {
-    animation: none;
+.tile:hover {
+    transform: scale(1.2);
 }
-@keyframes spawn {
+.tile.kill {
+    animation: kill .5s ease-in-out forwards;
+}
+
+@keyframes kill {
     0% {
-        transform: scale(0) rotate(0deg);
-    }
-    100% {
-        transform: scale(1) rotate(360deg);
-    }
-}
-.tile.active {
-    animation: shake 1s linear infinite;
-}
-@keyframes shake {
-    0% {
-        transform: rotate(0deg) scale(.9);
+        transform: rotate(0deg) scale(1);
     }
     20% {
-        transform: rotate(15deg) scale(.9);
-    }
-    40% {
-        transform: rotate(-10deg) scale(.9);
-    }
-    50% {
-        transform: rotate(0deg) scale(.9);
-    }
-    60% {
-        transform: rotate(15deg) scale(.9);
-    }
-    80% {
-        transform: rotate(-10deg) scale(.9);
+        transform: rotate(-20deg) scale(1.1);
     }
     100% {
-        transform: rotate(0deg) scale(.9);
-    }
-}
-
-.tile:hover {
-    transform: scale(1.05);
-}
-
-.tile.falling {
-    --width: 4.2rem;
-    --fall-distance: 0;
-    animation: fall .2s linear;
-}
-@keyframes fall {
-    0% {
-        transform: translateY(0px);
-    }
-    100% {
-        transform: translateY(calc(var(--width) * var(--fall-distance)));
+        transform: rotate(360deg) scale(0);
     }
 }
