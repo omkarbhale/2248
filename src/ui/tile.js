@@ -1,43 +1,46 @@
 export class Tile {
-    constructor(row, col, container, board) {
+    constructor(row, col, num, container, board) {
         this._row = row;
         this._col = col;
         this._board = board;
 
-        this.element = document.createElement("div");
-        this.element.textContent = `(${row}, ${col})`;
-        this.element.classList.add("tile");
-        this.element.style.setProperty("--i", row);
-        this.element.style.setProperty("--j", col);
-        this.element.style.setProperty("--bg-color", this.randomColor());
-        container.appendChild(this.element);
+        this._element = document.createElement("div");
+        this._element.textContent = num ? num : `(${row}, ${col})`;
+        this._element.classList.add("tile");
+        this._element.style.setProperty("--i", row);
+        this._element.style.setProperty("--j", col);
+        this._element.style.setProperty("--bg-color", this.randomColor());
+        container.appendChild(this._element);
     }
 
     randomColor() {
         return `rgba(${
-            Math.floor(Math.random() * 255)
+            105+ Math.floor(Math.random() * 150)
         }, ${
-            Math.floor(Math.random() * 255)
+            105 + Math.floor(Math.random() * 150)
         }, ${
-            Math.floor(Math.random() * 255)
+            105 + Math.floor(Math.random() * 150)
         })`
     }
 
     set row(r) {
         this._row = r;
-        this.element.style.setProperty("--i", this._row);
+        this._element.style.setProperty("--i", this._row);
     }
 
     set col(c) {
         this._col = c;
-        this.element.style.setProperty("--j", this._col);
+        this._element.style.setProperty("--j", this._col);
     }
 
-    free() {
-        this.element.addEventListener("animationend", (e) => {
+    remove(onRemove) {
+        if (!this._element.isConnected) {
+            throw new Error("Tried to remove a tile which was already removed");
+        }
+        this._element.addEventListener("animationend", (e) => {
             e.target.remove();
-            this._board.tiles[this._row][this._col] = new Tile(this._row, this._col, this._board.container, this._board);
+            onRemove ? onRemove(this._row, this._col) : undefined;
         }, { once: true });
-        this.element.classList.add("kill");
+        this._element.classList.add("kill");
     }
 }
