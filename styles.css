@@ -33,6 +33,9 @@ body {
     width: calc(var(--tile-size) * var(--num-cols));
     height: calc(var(--tile-size) * var(--num-rows));
     position: relative;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.4rem;
+    font-weight: bold;
 }
 
 .tile {
@@ -44,8 +47,15 @@ body {
     background-color: var(--bg-color);
 
     position: absolute;
+    display: grid;
+    place-items: center;
+    cursor: grab;
+    user-select: none;
+
     top: calc(var(--i) * var(--tile-size));
     left: calc(var(--j) * var(--tile-size));
+
+    animation: spawn .3s ease-in-out;
     transition: top .3s ease-in-out;
 }
 .tile:hover {
@@ -55,6 +65,17 @@ body {
     animation: kill .5s ease-in-out forwards;
 }
 
+@keyframes spawn {
+    0% {
+        transform: scale(0) rotate(-180deg);
+    }
+    95% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
 @keyframes kill {
     0% {
         transform: rotate(0deg) scale(1);
