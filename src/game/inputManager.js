@@ -25,24 +25,23 @@ export class InputManager {
         }
         document.body.addEventListener('mouseup', (e) => { this.handleMouseUp(e); });
         Tile.subscribe("newtile", (tile) => {
-            console.log("newtile", tile);
-            this.applyEventsOnTile(tile, tile._row, tile._col);
+            this.applyEventsOnTile(tile);
         });
     }
 
-    applyEventsOnTile(tile, i, j) {
-        tile.on('mousedown', (e) => { this.handleMouseDown(e, i, j) });
-        // this.board._tiles[i][j].on('mouseup', (e) => { this.handleMouseUp(e, i, j) });
-        tile.on('mouseover', (e) => { this.handleMouseOver(e, i, j) });
-        tile.on('mouseout', (e) => { this.handleMouseOut(e, i, j) });
+    applyEventsOnTile(tile) {
+        tile.on('mousedown', (e) => { this.handleMouseDown(e, tile) });
+        // this.board._tiles[i][j].on('mouseup', (e) => { this.handleMouseUp(e, tile) });
+        tile.on('mouseover', (e) => { this.handleMouseOver(e, tile) });
+        tile.on('mouseout', (e) => { this.handleMouseOut(e, tile) });
     }
 
-    handleMouseDown(e, row, col) {
+    handleMouseDown(e, tile) {
         if (!this.isPressed) {
             this.isPressed = true;
         }
         if (this.currentHovered[0] !== null) {
-            this.publishEvent("select", [row, col]);
+            this.publishEvent("select", [tile.row, tile.col]);
         }
     }
     
@@ -51,14 +50,14 @@ export class InputManager {
         this.publishEvent("end", null);
     }
 
-    handleMouseOver(e, row, col) {
-        this.currentHovered = [row, col];
+    handleMouseOver(e, tile) {
+        this.currentHovered = [tile.row, tile.col];
         if (this.isPressed) {
-            this.publishEvent("select", [row, col]);
+            this.publishEvent("select", [tile.row, tile.col]);
         }
     }
 
-    handleMouseOut(e, row, col) {
+    handleMouseOut(e, tile) {
         this.currentHovered[0] = null;
         this.currentHovered[1] = null;
     }

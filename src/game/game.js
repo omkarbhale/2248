@@ -7,41 +7,51 @@ export class Game {
         this.board = board;
         InputManager.instance.init(board);
         InputManager.instance.subscribe("select", ([row, col]) => { this.handleSelect(row, col) })
-        InputManager.instance.subscribe("end", () => { this.handleSelectEnd() });
+        InputManager.instance.subscribe("end", this.handleSelectEnd.bind(this));
         
-        this.currentInputSequence = this.newInputSequence();
-    }
-    
-    newInputSequence() {
-        const currentInputSequence = new InputSequence();
-        currentInputSequence.subscribe("tileadded", (tile) => {
-            console.assert(false, "Not implemented");
-        });
-        return currentInputSequence;
+        this.currentInputSequence = new InputSequence();
+        this.currentInputSequence.subscribe("tile-added", this.handleTileAdded.bind(this));
+        this.currentInputSequence.subscribe("tiles-removed", this.handleTilesRemoved.bind(this));
     }
 
     handleSelect(row, col) {
-        console.log(`Selected ${row} ${col}`);
+        if (!this.board._tiles[row][col]) return;
         const added = this.currentInputSequence.tryAddTile(this.board._tiles[row][col]);
         if (added) {
             this.board._tiles[row][col].activate(true);
         }
-        console.log(this.currentInputSequence._tileSequence);
     }
 
-    handleSelectEnd() {
-        console.log(`Select ended`);
-        // TODO: Change this to something more sophisticated
-        this.currentInputSequence = this.newInputSequence();
-
-        for (let i = 0; i < this.board._rows; i++) {
-            for (let j = 0; j < this.board._cols; j++) {
-                if (this.board._tiles[i][j]._isActive) {
-                    this.board._tiles[i][j].remove().then(() => {
-                        this.board._tiles[i][j] = new Tile(i, j, board._numberGenerator(), board._container, board);
-                    });
-                }
-            }
+    async handleSelectEnd() {
+        if (!this.currentInputSequence.isValid()) {
+            this.currentInputSequence.clear();
+            return;
         }
+
+        this.currentInputSequence._tileSequence.sort((tile1, tile2) => {
+            return tile1.row - tile2.row;
+        });
+        const tilesToRemove = [];
+        this.currentInputSequence._tileSequence.forEach(tile => {
+            if (tilesToRemove[tile.col] == null) tilesToRemove[tile.col] = [];
+            tilesToRemove[tile.col].push(tile);
+        })
+        this.board.removeTiles(tilesToRemove);
+        this.currentInputSequence.clear();
+    }
+
+    handleTileAdded({ lastTile, tile }) {
+        tile.activate(true);
+        if (lastTile) {
+            this.board.createConnection(lastTile, tile);
+        }
+    }
+
+    handleTilesRemoved(tiles) {
+        tiles.forEach(tile => {
+            if (!tile) return;
+            tile.activate(false);
+            this.board.removeConnectionsOf(tile)
+        });
     }
 }

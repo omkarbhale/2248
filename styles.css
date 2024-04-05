@@ -29,7 +29,7 @@ body {
 .container {
     --transition-duration: .3s;
     --tile-size: 65px;
-    --tile-real-size: 55px;
+    --tile-real-size: 58px;
     --num-cols: 5;
     --num-rows: 8;
 
@@ -59,8 +59,10 @@ body {
     top: calc(var(--i) * var(--tile-size));
     left: calc(var(--j) * var(--tile-size));
 
-    animation: spawn .3s ease-in-out;
     transition: top var(--transition-duration) ease-in-out, left var(--transition-duration) ease-in-out;
+}
+.tile.spawn {
+    animation: spawn .3s ease-in-out forwards;
 }
 .tile:hover {
     transform: scale(1.2);
@@ -150,6 +152,6 @@ body {
     height: 100%;
     background-color: white;
     transform-origin: top left;
-    transform: translateX(calc(-1px * var(--connection-width) / 2)) rotate(calc(atan((var(--dy) - var(--sy)) / (var(--dx) - var(--sx)))));
+    transform:  rotate(calc(atan((var(--dy) - var(--sy)) / (var(--dx) - var(--sx)))));
     transition: transform var(--transition-duration) ease-in-out;
 }

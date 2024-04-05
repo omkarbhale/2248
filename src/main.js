@@ -10,13 +10,14 @@ async function main() {
     const container = document.querySelector(".container")
     const board = new Board(ROWS, COLS, container);
     // board.setNumberGenerator(() => { return undefined; });
-    board.setNumberGenerator([2, 4, 4, 8, 8, 16, 32]);
+    board.setNumberGenerator([4, 4, 4, 4]);
     board.populateTiles();
 
     window.game = new Game(board);
-
-    window.Tile = Tile;
-    window.inputSequence = new InputSequence();
+    // setInterval(() => {
+    //     console.clear();
+    //     console.table(board._tiles);
+    // }, 50)
     window.board = board;
 }
 main();

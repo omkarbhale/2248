@@ -8,10 +8,15 @@ export class Tile {
 
         this._element = document.createElement("div");
         this._element.textContent = value ? value : `(${row}, ${col})`;
-        this._element.classList.add("tile");
+        this._element.classList.add("tile", "spawn");
         this._element.style.setProperty("--i", row);
         this._element.style.setProperty("--j", col);
         this._element.style.setProperty("--bg-color", this.randomColor());
+        this._element.addEventListener("animationend", (e) => {
+            if (e.animationName === "spawn") {
+                this._element.classList.remove("spawn");
+            }
+        });
 
         container.appendChild(this._element);
 
@@ -143,11 +148,13 @@ export class Tile {
     }
 
     remove() {
+        console.log('remove tile')
         return new Promise((res, rej) => {
             if (!this._element.isConnected) {
                 rej("Tried to remove a tile which was already removed");
             }
             this._element.addEventListener("animationend", (e) => {
+                this._element.remove();
                 res(this._row, this._col);
             }, { once: true });
             this._element.classList.add("kill");

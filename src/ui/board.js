@@ -1,3 +1,4 @@
+import { Connection } from "./connection.js";
 import { Tile } from "./tile.js";
 
 export class Board {
@@ -6,6 +7,7 @@ export class Board {
         this._cols = cols;
         this._container = container;
         this._tiles = []; // 2D array of tiles
+        this._connections = [];
     }
 
     /** This will be used to generate new numbers for the tiles that spawn.
@@ -49,11 +51,67 @@ export class Board {
             for (let j = 0; j < this._cols; j++) {
                 const tile = new Tile(i, j, this._numberGenerator(), this._container, this);
                 row.push(tile);
-                // tile.on("mouseover", (e) => console.log(`Mouse Over ${i} ${j}`));
-                // tile.on("mouseout", () => console.log(`Mouse Out ${i} ${j}`));
             }
             this._tiles.push(row);
         }
+    }
 
+    createNewTile(i, j) {
+        if (this._tiles[i][j] !== null) throw new Error("Making tile at a place where tile already exists");
+        const tile = new Tile(i, j, this._numberGenerator(), this._container, this);
+        this._tiles[i][j] = tile;
+    }
+
+    async removeTiles(tilesToRemove) {
+        const removeTilesInColumn = async (columnIndex, tiles) => {
+            if (tiles.length == 0) return;
+            const removeTilesPromises = [];
+            for (let i = 0; i < tiles.length; i++) {
+                this._tiles[tiles[i].row][columnIndex] = null;
+                removeTilesPromises.push(tiles[i].remove());
+            }
+            await Promise.all(removeTilesPromises);
+            let currentIndex = this._rows - 1;
+            for (let i = this._rows - 1; i >= 0; i--) {
+                if (this._tiles[i][columnIndex] !== null) {
+                    this._tiles[currentIndex][columnIndex] = this._tiles[i][columnIndex];
+                    this._tiles[currentIndex][columnIndex].row = currentIndex;
+                    currentIndex--;
+                }
+            }
+            // TODO wtf
+            const removedCount = currentIndex + 1;
+            for (let i = 0; i < removedCount; i++) {
+                console.assert(this._tiles[i][columnIndex] === null, i);
+                this._tiles[i][columnIndex] = null;
+            }
+            return removedCount;
+        }
+        const createTilesInColumn = async (columnIndex, tileCountPromise) => {
+            const tileCount = await tileCountPromise;
+            for (let i = 0; i < tileCount; i++) {
+                this.createNewTile(i, columnIndex);
+            }
+            // console.log('creating ' + tileCount + ' tiles in col ' + columnIndex)
+        }
+
+        for (const columnIndex in tilesToRemove) {
+            const removedCount = removeTilesInColumn(columnIndex, tilesToRemove[columnIndex]);
+            createTilesInColumn(columnIndex, removedCount);
+        }
+    }
+
+    createConnection(sourceTile, destinationTile) {
+        this._connections.push(new Connection(sourceTile, destinationTile, this._container));
+    }
+
+    removeConnectionsOf(tile) {
+        this._connections = this._connections.filter(connection => {
+            const toRemove = (connection.source === tile || connection.destination === tile);
+            if (toRemove) {
+                connection.remove();
+            }
+            return !toRemove
+        });
     }
 }
