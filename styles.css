@@ -48,13 +48,13 @@ body {
     width: var(--tile-real-size);
     height: var(--tile-real-size);
     background-color: var(--bg-color);
+    border-radius: 6px;
 
     position: absolute;
-    z-index: 2;
     display: grid;
     place-items: center;
-    cursor: grab;
     user-select: none;
+    z-index: 1; /* Lines joining them will have z-index 0 */
 
     top: calc(var(--i) * var(--tile-size));
     left: calc(var(--j) * var(--tile-size));
@@ -64,6 +64,12 @@ body {
 }
 .tile:hover {
     transform: scale(1.2);
+}
+.tile.selected {
+    border: 3px solid rgb(80, 49, 255);
+}
+.tile.active {
+    animation: tilt-shaking .15s ease-in-out infinite;
 }
 .tile.kill {
     animation: kill .5s ease-in-out forwards;
@@ -80,6 +86,33 @@ body {
         transform: scale(1) rotate(0deg);
     }
 }
+@keyframes shake {
+    0% {
+        background-color: #23d5ab;
+    }
+    50% {
+        background-color: red;
+    }
+    100% {
+        background-color: #23d5ab;
+    }
+}
+@keyframes tilt-shaking {
+    0% {
+        transform: scale(.9) rotate(0deg);
+    }
+    25% {
+        transform: scale(.9) rotate(6deg);
+    }
+    50% {
+        transform: scale(.9) rotate(0eg);
+    }
+    75% {
+        transform: scale(.9) rotate(-10deg);
+    }
+    100% {
+        transform: scale(.9) rotate(0deg);}
+}
 @keyframes kill {
     0% {
         transform: rotate(0deg) scale(1);
@@ -93,7 +126,8 @@ body {
 }
 
 .connection {
-    z-index: 1;
+    /* z-index: 1; */
+    --connection-width: 10;
     position: absolute;
     top: calc(var(--sy) * var(--tile-size) + (var(--tile-real-size) / 2));
     left: calc(var(--sx) * var(--tile-size) + (var(--tile-real-size) / 2));
@@ -104,8 +138,7 @@ body {
             (var(--sx) - var(--dx)) * (var(--sx) - var(--dx)) + (var(--sy) - var(--dy)) * (var(--sy) - var(--dy))
         )
     );
-    height: 10px;
-    transform: translateY(-50%);
+    height: calc(1px * var(--connection-width));
     transition: top var(--transition-duration) ease-in-out, left var(--transition-duration) ease-in-out, width var(--transition-duration) ease-in-out;
 }
 .connection::before {
@@ -117,6 +150,6 @@ body {
     height: 100%;
     background-color: white;
     transform-origin: top left;
-    transform: rotate(calc(atan((var(--dy) - var(--sy)) / (var(--dx) - var(--sx)))));
+    transform: translateX(calc(-1px * var(--connection-width) / 2)) rotate(calc(atan((var(--dy) - var(--sy)) / (var(--dx) - var(--sx)))));
     transition: transform var(--transition-duration) ease-in-out;
 }

@@ -84,4 +84,10 @@ export class Connection {
         this._element.style.setProperty("--dx", this.dc);
         this._element.style.setProperty("--dy", this.dr);
     }
+
+    // TODO: connection remove animation
+    // Take hint from tile remove animation
+    remove() {
+        this._element.remove();
+    }
 }

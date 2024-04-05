@@ -1,22 +1,31 @@
 export class Tile {
-    constructor(row, col, num, container, board) {
+    constructor(row, col, value, container, board) {
         this._row = row;
         this._col = col;
         this._board = board;
+        this._value = value;
+        this._isActive = false;
 
         this._element = document.createElement("div");
-        this._element.textContent = num ? num : `(${row}, ${col})`;
+        this._element.textContent = value ? value : `(${row}, ${col})`;
         this._element.classList.add("tile");
         this._element.style.setProperty("--i", row);
         this._element.style.setProperty("--j", col);
         this._element.style.setProperty("--bg-color", this.randomColor());
+
         container.appendChild(this._element);
 
         this._events = {
             "positionchange": [
                 // {callback, once, args, originalCallback, applied}
             ],
+            "mousedown": [],
+            "mouseup": [],
+            "mouseover": [],
+            "mouseout": [],
         }
+
+        Tile.publishEvent("newtile", this);
     }
 
     randomColor() {
@@ -63,20 +72,30 @@ export class Tile {
      */
     _applyEvents(toApply) {
         for (const event in this._events) {
-            for (const { callback, once, args, applied } of this._events[event]) {
+            for (const i in this._events[event]) {
+                const { callback, once, args, applied } = this._events[event][i];
                 if (toApply) {
                     if (applied) continue;
 
                     switch (event) {
                         case "positionchange":
                             // Don't need to apply positionchange
+                            this._events[event][i].applied = true;
                         break;
                         case "click":
+                        case "mousedown":
+                        case "mouseup":
+                        case "mouseover":
+                        case "mouseout":
+                            this._element.addEventListener(event, callback, once);
+                            this._events[event][i].applied = true;
                             // TODO
                         break;
                         default:
                             throw new Error("Unreachable code");
                     }
+                } else {
+                    throw new Error("Not implemented");
                 }
             }
         }
@@ -110,7 +129,16 @@ export class Tile {
     _onPositionChanged(dr, dc) {
         for (const key in this._events["positionchange"]) {
             const { callback, once, args, applied } = this._events["positionchange"][key];
-            callback({ target: this, row: this._row, col: this._col, drow: dr, dcol: dc }, ...args);
+            callback({ target: this, row: this._row, col: this._col, drow: dr, dcol: dc });
+        }
+    }
+
+    activate(toActive) {
+        this._isActive = toActive;
+        if (toActive) {
+            this._element.classList.add("active");
+        } else {
+            this._element.classList.remove("active");
         }
     }
 
@@ -124,5 +152,26 @@ export class Tile {
             }, { once: true });
             this._element.classList.add("kill");
         })
+    }
+
+    static subscribers = {};
+    static publishEvent(event, data) {
+        if (!Tile.subscribers[event]) return;
+        Tile.subscribers[event].forEach(subscriberCallback => subscriberCallback(data));
+    }
+
+    static subscribe(event, callback) {
+        let index;
+        if (!Tile.subscribers[event]) {
+            Tile.subscribers[event] = [];
+        }
+        index = Tile.subscribers[event].push(callback) - 1;
+
+        console.warn("TODO: Fix Index bug");
+        return {
+            unsubscribe() {
+                Tile.subscribers[event].splice(index, 1);
+            }
+        };
     }
 }
