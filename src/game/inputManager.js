@@ -20,7 +20,6 @@ export class InputManager {
         for (let i = 0; i < this.board._rows; i++) {
             for (let j = 0; j < this.board._cols; j++) {
                 this.applyEventsOnTile(this.board._tiles[i][j], i, j);
-                // this.board._tiles[i][j].on('mouseup', (e) => { this.handleMouseUp(e, i, j) });
             }
         }
         document.body.addEventListener('mouseup', (e) => { this.handleMouseUp(e); });
@@ -31,7 +30,6 @@ export class InputManager {
 
     applyEventsOnTile(tile) {
         tile.on('mousedown', (e) => { this.handleMouseDown(e, tile) });
-        // this.board._tiles[i][j].on('mouseup', (e) => { this.handleMouseUp(e, tile) });
         tile.on('mouseover', (e) => { this.handleMouseOver(e, tile) });
         tile.on('mouseout', (e) => { this.handleMouseOut(e, tile) });
     }

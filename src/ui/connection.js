@@ -70,14 +70,11 @@ export class Connection {
         if (dc !== null) {
             this.dc = dc;
         }
-        // debugger;
         if (this.dc < this.sc) {
-            // throw new Error("For a connection, Source must be less than Destination (For css reasons)")
             const temp = this.source;
             this.source = this.destination;
             this.destination = temp;
             [this.sr, this.sc, this.dr, this.dc] = [this.dr, this.dc, this.sr, this.sc];
-            // debugger;
         }
         this._element.style.setProperty("--sx", this.sc);
         this._element.style.setProperty("--sy", this.sr);

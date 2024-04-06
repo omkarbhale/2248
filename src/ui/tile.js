@@ -1,25 +1,24 @@
+import { TileColor } from "../game/color.js";
+
+// Note: please do not read this file if you care about your mental
+// Especially do not read how i am exposing the tile's events
+
 export class Tile {
     constructor(row, col, value, container, board) {
         this._row = row;
         this._col = col;
         this._board = board;
-        this._value = value;
         this._isActive = false;
 
         this._element = document.createElement("div");
-        this._element.textContent = value ? value : `(${row}, ${col})`;
-        this._element.classList.add("tile", "spawn");
+        this._element.classList.add("tile");
         this._element.style.setProperty("--i", row);
         this._element.style.setProperty("--j", col);
-        this._element.style.setProperty("--bg-color", this.randomColor());
-        this._element.addEventListener("animationend", (e) => {
-            if (e.animationName === "spawn") {
-                this._element.classList.remove("spawn");
-            }
-        });
+        this.value = value;
+        
 
         container.appendChild(this._element);
-
+        
         this._events = {
             "positionchange": [
                 // {callback, once, args, originalCallback, applied}
@@ -29,18 +28,27 @@ export class Tile {
             "mouseover": [],
             "mouseout": [],
         }
-
+        
         Tile.publishEvent("newtile", this);
     }
+    
+    getColor(value) {
+        return TileColor.getColor(value);
+    }
 
-    randomColor() {
-        return `rgba(${
-            105+ Math.floor(Math.random() * 150)
-        }, ${
-            105 + Math.floor(Math.random() * 150)
-        }, ${
-            105 + Math.floor(Math.random() * 150)
-        })`
+    get value() {
+        return this._value;
+    }
+    set value(value) {
+        this._value = value;
+        this._element.addEventListener("animationend", (e) => {
+            if (e.animationName === "spawn") {
+                this._element.classList.remove("spawn");
+            }
+        }, { once:true });
+        this._element.classList.add("spawn");
+        this._element.style.setProperty("--bg-color", this.getColor(value));
+        this._element.textContent = value ? value : `(${this._row}, ${this._col})`;
     }
 
     /**
@@ -94,7 +102,6 @@ export class Tile {
                         case "mouseout":
                             this._element.addEventListener(event, callback, once);
                             this._events[event][i].applied = true;
-                            // TODO
                         break;
                         default:
                             throw new Error("Unreachable code");
@@ -148,7 +155,6 @@ export class Tile {
     }
 
     remove() {
-        console.log('remove tile')
         return new Promise((res, rej) => {
             if (!this._element.isConnected) {
                 rej("Tried to remove a tile which was already removed");

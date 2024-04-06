@@ -79,11 +79,10 @@ export class Board {
                     currentIndex--;
                 }
             }
-            // TODO wtf
             const removedCount = currentIndex + 1;
-            for (let i = 0; i < removedCount; i++) {
-                console.assert(this._tiles[i][columnIndex] === null, i);
-                this._tiles[i][columnIndex] = null;
+            while (currentIndex >= 0) {
+                this._tiles[currentIndex][columnIndex] = null;
+                currentIndex--;
             }
             return removedCount;
         }

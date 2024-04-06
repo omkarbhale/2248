@@ -5,10 +5,11 @@
 }
 
 body {
-    background-color: #303030;
-	/* background: linear-gradient(-45deg, #31004a, #8300c4, #23d5ab); */
-	/* background-size: 400% 400%; */
-	/* animation: gradient 5s ease infinite; */
+    /* background: linear-gradient(-45deg, #31004a, #8300c4, #23d5ab);
+	background-size: 400% 400%;
+	animation: gradient 5s ease infinite;
+    background-color: #303030; */
+    background-color: #410062;
 	height: 100vh;
 
     display: grid;
@@ -59,7 +60,7 @@ body {
     top: calc(var(--i) * var(--tile-size));
     left: calc(var(--j) * var(--tile-size));
 
-    transition: top var(--transition-duration) ease-in-out, left var(--transition-duration) ease-in-out;
+    transition: top var(--transition-duration) ease-in-out, left var(--transition-duration) ease-in-out, transform .08s;
 }
 .tile.spawn {
     animation: spawn .3s ease-in-out forwards;
@@ -67,14 +68,12 @@ body {
 .tile:hover {
     transform: scale(1.2);
 }
-.tile.selected {
-    border: 3px solid rgb(80, 49, 255);
-}
 .tile.active {
-    animation: tilt-shaking .15s ease-in-out infinite;
+    animation: rotate .8s ease-in-out forwards;
 }
 .tile.kill {
     animation: kill .5s ease-in-out forwards;
+    pointer-events: none;
 }
 
 @keyframes spawn {
@@ -99,21 +98,12 @@ body {
         background-color: #23d5ab;
     }
 }
-@keyframes tilt-shaking {
+@keyframes rotate {
     0% {
         transform: scale(.9) rotate(0deg);
     }
-    25% {
-        transform: scale(.9) rotate(6deg);
-    }
-    50% {
-        transform: scale(.9) rotate(0eg);
-    }
-    75% {
-        transform: scale(.9) rotate(-10deg);
-    }
     100% {
-        transform: scale(.9) rotate(0deg);}
+        transform: scale(.9) rotate(360deg);}
 }
 @keyframes kill {
     0% {
@@ -154,4 +144,58 @@ body {
     transform-origin: top left;
     transform:  rotate(calc(atan((var(--dy) - var(--sy)) / (var(--dx) - var(--sx)))));
     transition: transform var(--transition-duration) ease-in-out;
+}
+
+/*----------------------------------------------------------------
+Score section */
+.score-container {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    color: white;
+}
+.score {
+    font-family: sans-serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 1.5rem;
+    letter-spacing: 4px;
+    animation: pop .3s linear forwards;
+}
+.score-change {
+    display: block;
+    position: absolute;
+    left: 80%;
+    font-size: 1.8rem;
+    font-family: sans-serif;
+    font-weight: bold;
+    animation: floatup .8s linear forwards;
+}
+@keyframes floatup {
+    0% {
+        top: calc(50%);
+        transform: translateY(-50%);
+        opacity: 1;
+    }
+    80% {
+        top: calc(35%);
+        transform: translateY(-50%);
+        /* opacity: .5; */
+    }
+    100% {
+        top: calc(30%);
+        transform: translateY(-50%);
+        opacity: 0;
+    }
+}
+@keyframes pop {
+    0% {
+        transform: scale(.3);
+    }
+    70% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
 }

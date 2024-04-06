@@ -1,6 +1,6 @@
 import { InputManager } from "./inputManager.js";
 import { InputSequence } from "./inputSequence.js";
-import { Tile } from "../ui/tile.js";
+import { Score } from "../ui/score.js";
 
 export class Game {
     constructor(board) {
@@ -28,9 +28,11 @@ export class Game {
             return;
         }
 
-        this.currentInputSequence._tileSequence.sort((tile1, tile2) => {
-            return tile1.row - tile2.row;
-        });
+        const newValue = this.currentInputSequence.calculateFinalValueFromSequence();
+        const [excludedTile] = this.currentInputSequence.removeTiles(this.currentInputSequence._tileSequence.length - 1);
+        excludedTile.value = newValue;
+        Score.addScore(newValue);
+
         const tilesToRemove = [];
         this.currentInputSequence._tileSequence.forEach(tile => {
             if (tilesToRemove[tile.col] == null) tilesToRemove[tile.col] = [];

@@ -1,4 +1,4 @@
-// UI will make an instance of Input Sequence, fill it, then notify the game
+import { roundDownToPowerOfTwo, roundToClosestPowerOfTwo } from "../utils/math.js";
 
 export class InputSequence {
     constructor() {
@@ -30,12 +30,14 @@ export class InputSequence {
     removeTiles(startIndex) {
         const removedTiles = this._tileSequence.splice(startIndex);
         this.publishEvent("tiles-removed", removedTiles);
+        return removedTiles;
     }
 
-    // TODO: One method should be responsible for determining whether to add or remove some,
     tryAddTile(tile) {
+        // Go back in sequence
         const foundIndex = this._tileSequence.findIndex((t) => t === tile);
-        if (foundIndex !== -1) {
+        if (foundIndex !== -1 && foundIndex === this._tileSequence.length - 2) {
+            // trying to add second last tile meaning we delete last tile
             this.removeTiles(foundIndex+1);
             return;
         }
@@ -70,5 +72,15 @@ export class InputSequence {
                 this.subscribers[event].splice(index, 1);
             }
         };
+    }
+
+    // Uses values in current sequence
+    calculateFinalValueFromSequence() {
+        let sum = 0;
+        for (const tile of this._tileSequence) {
+            sum += tile.value;
+        }
+        return roundToClosestPowerOfTwo(sum);
+        // return roundDownToPowerOfTwo(sum);
     }
 }
