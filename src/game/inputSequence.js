@@ -79,8 +79,9 @@ export class InputSequence {
         let sum = 0;
         for (const tile of this._tileSequence) {
             sum += tile.value;
+            sum = roundToClosestPowerOfTwo(sum);
         }
-        return roundToClosestPowerOfTwo(sum);
+        return sum;
         // return roundDownToPowerOfTwo(sum);
     }
 }

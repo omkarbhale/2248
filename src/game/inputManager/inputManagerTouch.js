@@ -31,6 +31,10 @@ export class InputManagerTouch {
 
     init(board) {
         this.board = board;
+
+        this.board._container.style.setProperty('--tile-size', '60px');
+        this.board._container.style.setProperty('--tile-real-size', '55px');
+
         for (let i = 0; i < this.board._rows; i++) {
             for (let j = 0; j < this.board._cols; j++) {
                 this.applyEventsOnTile(this.board._tiles[i][j], i, j);

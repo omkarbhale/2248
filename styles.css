@@ -12,8 +12,11 @@ body {
     background-color: #410062;
 	height: 100vh;
 
-    display: grid;
-    place-items: center;
+    /* display: grid; */
+    /* place-items: center; */
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
 }
 @keyframes gradient {
 	0% {
@@ -38,7 +41,7 @@ body {
     height: calc(var(--tile-size) * var(--num-rows));
     position: relative;
     font-family: sans-serif;
-    /* font-size: 1.2rem; */
+    margin-top: 2rem;
     font-weight: bold;
 }
 
@@ -153,6 +156,7 @@ Score section */
     justify-content: center;
     position: relative;
     color: white;
+    margin-top: 2rem;
 }
 .score {
     font-family: sans-serif;
