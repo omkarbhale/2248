@@ -39,7 +39,9 @@ export class Board {
                 numbers.push(this._tiles[i][j].value);
             }
         }
-        this.setNumberGenerator(new Set(numbers).values().toArray());
+        const toPickFrom = new Set(numbers).values().toArray().sort((a, b) => a-b).slice(0, 3);
+        console.log(toPickFrom);
+        this.setNumberGenerator(toPickFrom);
     }
 
     /**

@@ -45,9 +45,9 @@ export class Game {
         tilesToRemove = [];
         const freqMapping = this.board.getTilesFreqMapping();
         const values = Object.keys(freqMapping).sort((a, b) => a-b);
-        if (values.length >= 4) {
+        if (values.length >= 5) {
             const removeCandidates = freqMapping[values[0]];
-            if (removeCandidates.length < 5) {
+            if (removeCandidates.length < 4) {
                 for (const tile of freqMapping[values[0]]) {
                     if (tilesToRemove[tile.col] == null) tilesToRemove[tile.col] = [];
                     tilesToRemove[tile.col].push(tile);
