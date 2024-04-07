@@ -1,6 +1,6 @@
 export class TileColor {
     static getColor(value) {
-        const hue = (value * 137.508) % 360;
+        const hue = (value * 140.508) % 360;
 
         const saturationLow = 50;
         const saturationHigh = 100;

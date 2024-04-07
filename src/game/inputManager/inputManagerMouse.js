@@ -1,18 +1,18 @@
-import { Tile } from "../ui/tile.js";
+import { Tile } from "../../ui/tile.js";
 
-export class InputManager {
+export class InputManagerMouse {
     static _instance = null;
     static get instance() {
-        if (!InputManager._instance) {
-            InputManager._instance = new InputManager();
+        if (!InputManagerMouse._instance) {
+            InputManagerMouse._instance = new InputManagerMouse();
         }
-        return InputManager._instance;
+        return InputManagerMouse._instance;
     }
 
     constructor() {
         this.isPressed = false;
         this.subscribers = {};
-        this.currentHovered = [null, null];
+        this.currentHovered = [null, null]; // row, col
     }
 
     init(board) {
@@ -29,9 +29,9 @@ export class InputManager {
     }
 
     applyEventsOnTile(tile) {
-        tile.on('mousedown', (e) => { this.handleMouseDown(e, tile) });
-        tile.on('mouseover', (e) => { this.handleMouseOver(e, tile) });
-        tile.on('mouseout', (e) => { this.handleMouseOut(e, tile) });
+        tile._element.addEventListener('mousedown', (e) => { this.handleMouseDown(e, tile) });
+        tile._element.addEventListener('mouseover', (e) => { this.handleMouseOver(e, tile) });
+        tile._element.addEventListener('mouseout', (e) => { this.handleMouseOut(e, tile) });
     }
 
     handleMouseDown(e, tile) {

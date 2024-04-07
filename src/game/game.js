@@ -1,5 +1,5 @@
-import { InputManager } from "./inputManager.js";
 import { InputSequence } from "./inputSequence.js";
+import { InputManager } from "./inputManager/inputManager.js";
 import { Score } from "../ui/score.js";
 
 export class Game {
