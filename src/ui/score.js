@@ -1,4 +1,5 @@
 import { forceAnimationRestart } from "../utils/animation.js";
+import { numberRepresentation } from "../utils/math.js";
 
 // static class
 export class Score {
@@ -8,10 +9,12 @@ export class Score {
     static addScore(scoreChange) {
         Score.currentScore += scoreChange;
 
-        this.element.innerHTML = Score.currentScore;
+        const currentScoreString = numberRepresentation(Score.currentScore, 2);
+        this.element.innerHTML = currentScoreString;
         forceAnimationRestart(this.element);
 
-        this.changeElement.innerHTML = `+${scoreChange}`;
+        const scoreChangeString = numberRepresentation(scoreChange, 2);
+        this.changeElement.innerHTML = `+${scoreChangeString}`;
         forceAnimationRestart(this.changeElement);
     }
 }

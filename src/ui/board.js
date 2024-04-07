@@ -31,6 +31,17 @@ export class Board {
         throw new Error("Number generator must be an array or a function");
     }
 
+    updateNumberGenerator() {
+        const numbers = [];
+        for (let i = 0; i < this._rows; i++) {
+            for (let j = 0; j < this._cols; j++) {
+                if (this._tiles[i][j] === null) continue;
+                numbers.push(this._tiles[i][j].value);
+            }
+        }
+        this.setNumberGenerator(new Set(numbers).values().toArray());
+    }
+
     /**
      * You only need to call this method once.
      * The input sequence itself will be responsible for notifying the game
@@ -96,6 +107,7 @@ export class Board {
 
         for (const columnIndex in tilesToRemove) {
             const removedCount = removeTilesInColumn(columnIndex, tilesToRemove[columnIndex]);
+            this.updateNumberGenerator();
             createTilesInColumn(columnIndex, removedCount);
         }
     }
@@ -112,5 +124,21 @@ export class Board {
             }
             return !toRemove
         });
+    }
+
+    getTilesFreqMapping() {
+        const mapping = {};
+        for (let i = 0; i < this._rows; i++) {
+            for (let j = 0; j < this._cols; j++) {
+                if (this._tiles[i][j] === null) {
+                    continue;
+                }
+                if (!mapping[this._tiles[i][j].value]) {
+                    mapping[this._tiles[i][j].value] = [];
+                }
+                mapping[this._tiles[i][j].value].push(this._tiles[i][j]);
+            }
+        }
+        return mapping;
     }
 }

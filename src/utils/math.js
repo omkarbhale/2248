@@ -35,3 +35,19 @@ export function roundToClosestPowerOfTwo(x) {
     return x < resultAvg ? smaller : larger; 
     // return larger;
 }
+
+export function numberRepresentation(num, precision) {
+    if (num < 10_000) return num.toString();
+    if (num >= 1000000000) {
+        const result = (num / 1000000000).toFixed(precision);
+        return result.replace(/\.?0*$/, '') + 'b';
+    } else if (num >= 1000000) {
+        const result = (num / 1000000).toFixed(precision);
+        return result.replace(/\.?0*$/, '') + 'm';
+    } else if (num >= 1000) {
+        const result = (num / 1000).toFixed(precision);
+        return result.replace(/\.?0*$/, '') + 'k';
+    } else {
+        return num.toString();
+    }
+}

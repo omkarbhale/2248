@@ -1,4 +1,5 @@
 import { TileColor } from "../game/color.js";
+import { numberRepresentation } from "../utils/math.js";
 
 // Note: please do not read this file if you care about your mental
 // Especially do not read how i am exposing the tile's events
@@ -48,7 +49,9 @@ export class Tile {
         }, { once:true });
         this._element.classList.add("spawn");
         this._element.style.setProperty("--bg-color", this.getColor(value));
-        this._element.textContent = value ? value : `(${this._row}, ${this._col})`;
+
+        const valueString = numberRepresentation(value, 1);
+        this._element.textContent = value ? valueString : `(${this._row}, ${this._col})`;
     }
 
     /**

@@ -33,12 +33,29 @@ export class Game {
         excludedTile.value = newValue;
         Score.addScore(newValue);
 
-        const tilesToRemove = [];
+        let tilesToRemove = [];
         this.currentInputSequence._tileSequence.forEach(tile => {
             if (tilesToRemove[tile.col] == null) tilesToRemove[tile.col] = [];
             tilesToRemove[tile.col].push(tile);
         })
         this.board.removeTiles(tilesToRemove);
+
+        // Delete tiles if their occurrences are less than an amount
+        // Don't remove if type of tiles are less than an amount (dont remove if type of tiles are less than 4)
+        tilesToRemove = [];
+        const freqMapping = this.board.getTilesFreqMapping();
+        const values = Object.keys(freqMapping).sort((a, b) => a-b);
+        if (values.length >= 4) {
+            const removeCandidates = freqMapping[values[0]];
+            if (removeCandidates.length < 5) {
+                for (const tile of freqMapping[values[0]]) {
+                    if (tilesToRemove[tile.col] == null) tilesToRemove[tile.col] = [];
+                    tilesToRemove[tile.col].push(tile);
+                }
+            }
+            this.board.removeTiles(tilesToRemove);
+        }
+
         this.currentInputSequence.clear();
     }
 
